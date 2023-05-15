@@ -2,7 +2,8 @@ const express = require("express");
 const request = require("request");
 const bodyParser = require("body-parser");
 const https = require("https");
-
+/* const { send } = require("process");
+ */
 const app = express();
 
 app.use(bodyParser.urlencoded({extended:true}));
@@ -11,7 +12,7 @@ app.use(express.static("public"));
 /* const key = "d08751a996d585e2f1994fd4f15eaf3d-us21";
     id = ddae1ebd95
  */
-app.listen(3000,function(){
+app.listen(process.env.PORT ||3000,function(){
     console.log("Server is runnig on 3000");
 });
 
@@ -47,15 +48,25 @@ app.post("/",function(req,res){
     const options = {
 
         method: "POST",
-        auth : "anystring:d08751a996d585e2f1994fd4f15eaf3d-us21"
+        auth : "anystring:21c76e4eaebfbe03b75d051d180ba725-us2"
 
       };
 
 
     const request = https.request(url , options , function(response){
-        response.on("data",function(data){
+
+        console.log(response.statusCode) ;
+        if(response.statusCode===200){
+            res.sendFile(__dirname+"/success.html")
+        }
+        else
+        {
+            res.sendFile(__dirname+"/failure.html")
+        }
+
+/*         response.on("data",function(data){
             console.log(JSON.parse(data));
-        });
+        }); */
 
     });
 
@@ -63,4 +74,9 @@ app.post("/",function(req,res){
     request.end();
 
 
+});
+
+
+app.post("/failure",function(req,res){
+    res.redirect("/");
 });
